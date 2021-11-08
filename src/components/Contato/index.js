@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import credenciais from '../../assets/credenciais.json';
+//import credenciais from '../../assets/credenciais.json';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
 import './contato.css';
@@ -47,7 +47,7 @@ export function Contato({dados}){
         await doc.useServiceAccountAuth({
             client_email: process.env.REACT_APP_ID_CONTA,
             // client_email: 'testegooglesheets@carbon-ray-319517.iam.gserviceaccount.com',
-            private_key: credenciais.private_key
+            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n')  //credenciais.private_key
         })
 
         await doc.loadInfo(); 

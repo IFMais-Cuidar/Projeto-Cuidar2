@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Cards from 'react-credit-cards';
 
-import credenciais from '../../assets/credenciais.json';
+//import credenciais from '../../assets/credenciais.json';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
 import pix from '../../assets/imgs/pix.png';
@@ -318,7 +318,7 @@ export function Formulario({dados}){
         }
         await doc.useServiceAccountAuth({
             client_email: process.env.REACT_APP_ID_CONTA,
-            private_key: credenciais.private_key
+            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n')  //credenciais.private_key
         })
 
         await doc.loadInfo(); 
