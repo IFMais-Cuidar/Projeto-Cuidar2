@@ -1,0 +1,27 @@
+.galeriaContainer {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+}
+
+.galeriaImagens {
+    padding-top: 1rem;    
+}
+
+.galeriaImagens div img {
+   
+    border: 1px solid black;
+    margin-top: 2rem;
+    height: 20rem;
+    width: 40rem;
+ 
+ }
+
+.galeriaImagens div img:hover {
+   
+   transform:scale(2, 2);
+   transition: 0.3s;
+   border-radius: 20%;
+
+}
