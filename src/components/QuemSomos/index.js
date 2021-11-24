@@ -59,7 +59,8 @@ export function QuemSomos({dados, todas, showButton=true}){
                     <div className="col-md-6">
                         <div className="col-sm-8 text-right">
                             <h4>Texto sobre a empresa</h4>
-                            <p>{dados.data.textoexplicativo.text}</p>
+                            <p>{dados.data.textoexplicativo[0].text}</p>
+                            {/* {console.log(dados.data)} */}
                         </div>
                         <div className="col-sm-4">
                             <img src={dados.data.imagem1.url} className="img-responsive img-circle"  alt="Empresa"/>
@@ -71,7 +72,7 @@ export function QuemSomos({dados, todas, showButton=true}){
                         </div>
                         <div className="col-sm-8">
                             <h4>Missão da empresa</h4>
-                            <p>{dados.data.missaodaempresa.text}</p>
+                            <p>{dados.data.missaodaempresa[0].text}</p>
                             
                         </div>
                     </div>

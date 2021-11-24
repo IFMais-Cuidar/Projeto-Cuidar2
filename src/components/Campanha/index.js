@@ -50,8 +50,16 @@ export function Campanha({dados, children}) {
                             <img src={doc.data.imagemcapa.url} alt={doc.data.imagemcapa.alt} className='img-responsive' />
                     </div>
                     <div className="col-sm-6">
-                            <h1>Descrição:</h1>
-                            <p>{doc.data.descricaocampanha[0].text}</p>
+                            <h1>Descrição:</h1>                                
+
+                            {doc.data.descricaocampanha.map(
+                                i => {
+                                    return(
+                                        <p>{i.text}</p>
+                                    )
+                                }
+                            )}
+                            
                             <span> {doc.data.periodo.text} </span>
                             <br style={{marginBottom:'2rem'}}/>
                             {/*<a href="#doacao" className="btn btn-success btn-lg">Clique aqui para doar!</a>*/}                            

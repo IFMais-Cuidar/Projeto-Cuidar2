@@ -4,25 +4,22 @@ import { Link } from 'react-router-dom';
 import './navbar.css';
 
 export function NavBar({dados}){
-
+    
+    document.title=dados.data.nomedaempresa[0].text
     
     return(
         <>               
         <nav className="navbar navbar-default navbar-fixed-top">
             <div className="container">
-                <div className="navbar-header">
-                    <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#menu-navegacao" >
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                    </button>  
+                <div className="navbar-header">                    
                                 
                     <Link to={window.location.pathname === "/" ? "#" : "/"} onClick={()=>{
                         window.scrollTo(0,0)
                     }} className="navbar-brand">{dados.data.nomedaempresa[0].text}</Link> 
+                   
                 </div>  
                 
-                <div className="collapse navbar-collapse menu-navegacao" id="menu-navegacao">
+                <div className="menu-navegacao" id="menu-navegacao">
                     <ul className="nav navbar-nav navbar-right">      
                         {window.location.pathname === "/" ? 
                         <>                                         

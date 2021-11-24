@@ -25,7 +25,7 @@ export function Localizacao({dados}){
         </section> 
         :
         <section id="localizacao" className={`bg-${dados.data.tipobotao[0].text}`}>
-            {console.log(`bg-${dados.data.tipobotao[0].text}`)}
+            {/* {console.log(`bg-${dados.data.tipobotao[0].text}`)} */}
             <div className="container">
                 <div className="row">
                     <div className="col-xs-12">

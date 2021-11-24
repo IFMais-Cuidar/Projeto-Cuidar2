@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Cards from 'react-credit-cards';
 
+import { Loading } from "../../components/Loading";
+
 //import credenciais from '../../assets/credenciais.json';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
@@ -26,6 +28,8 @@ const doc = new GoogleSpreadsheet(process.env.REACT_APP_ID_PLANILHA);
 export function Formulario({dados}){
     
     const [dataQrCode, setDataQrCode] = useState('');
+    const [doando, setDoando] = useState(false);
+
     const {campanhaAtual} = useParams();
 
     const [docCampanha, setDocData] = useState(null);
@@ -35,7 +39,7 @@ export function Formulario({dados}){
     const [nome, setNome] = useState('');  
     const [cpf, setCpf] = useState('');
     const [tel, setTel] = useState('');
-    const [valor, setValor] = useState('R$ 0,00');
+    const [valor, setValor] = useState('R$ 1,00');
 
     const [email, setEmail] = useState('');
     const [dataNascimento, setDataNascimento] = useState('');
@@ -93,16 +97,19 @@ export function Formulario({dados}){
         }
     }
     function handleChangeCep(event) {
-        const value = event.target.value;
-        const regMatch = ""
+        //const regMatch = ""      
+        
         // Precisa de um regex para o cep,
         // porém deve se atentar aos dados enviados ao gerencia net
         // pois o cep a ser enviado para la, sao somente os numeros
         // sem . e sem - .... exemplo -> 35555000
 
-        // if (regMatch) {
-            setCep(value)
-        // }
+        //if (regMatch) {
+            //setCep(value)
+        //}
+
+        const x = event.target.value.replace(/\D+/g, '').match(/(\d{0,5})(\d{0,3})/);        
+        setCep(`${x[1]}` + (x[2] ? `-${x[2]}` : ``))
     }
     function handleChangeBairro(event) {
         const value = event.target.value;
@@ -131,21 +138,47 @@ export function Formulario({dados}){
     
     function handleChangeEmail(event) {
         const value = event.target.value;
-        const regMatch = ""
         //Precisa de um regex para email padrao ... teste@gmail.com
         // if (regMatch){
             setEmail(value)
         // }
     }
     function handleChangeDataNascimento(event) {
-        const value = event.target.value;
-        const regMatch = ""
         //Precisa de um regex 
         // EXEMPLO DE DATA ACEITA PELA GERENCIA NET = 2019-06-28 -> yyyy-MM-dd
         // if (regMatch) {
-            setDataNascimento(value)
+        //    setDataNascimento(value)
         // }
 
+        const x = event.target.value.replace(/\D+/g, '').match(/(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})/);
+        //console.log(x)
+        setDataNascimento(
+            (//Dia
+                (x[1]) < 4 ? `${x[1]}` : ``) // Garante que o primeiro digito esta entre 0 e 3
+                +(
+                    (x[1] === '0' && x[2] !== '0' ? `${x[2]}` : ``) // Garante que o dia 00 nao existe
+                    ||
+                    (x[1] === '1' || x[1] === '2' ? `${x[2]}` : ``) // Caso normal
+                    ||
+                    (x[1] === '3' ? (x[2] < 2 ? `${x[2]}` : ``) : ``) // Garante que o dia 32 pra cima nao exista
+                ) 
+
+            //Mes
+            +(x[3] && x[3] < 2 ? `-${x[3]}` : ``) // Primeiro digito do mes pode ser 0 e 1
+            +(x[3] === '0' ? (x[4] !== '0' ?`${x[4]}`: ``) : (x[4] < 3 ? `${x[4]}` : ``)) // Se for zero, o segundo digito vai até 9, se nao vai até 2
+            +
+            //Ano            
+            (x[5] === '1' || x[5] === '2' ? `-${x[5]}` : ``) // Primeiro digito 1 ou 2
+
+            +(x[5] === '1' && x[6] === '9' ? `${x[6]}` : ``) // Se o primeiro digito for 1, o segundo deve ser 9
+            +(x[5] === '1' ? `${x[7]}` : ``) + (x[5] === '1' ? `${x[8]}` : ``)
+            
+            +(x[5] === '2' && x[6] === '0' ? `${x[6]}` : ``)// Se o primeiro digito for 2, o segundo deve ser 0
+            +(x[5] === '2' && x[7] < 2 ? `${x[7]}` : ``)
+            +(x[5] === '2' ? `${x[8]}` : ``)
+
+            );
+        
     }
 
     function handleChangeName(event){
@@ -171,8 +204,7 @@ export function Formulario({dados}){
 
     function handleChangeValor(event){
         const x = event.target.value
-        //     .match(/^[R][$] \d+,\d{2}$/);
-
+        .match(/(^[R][$] )(\d{1,20})(,)(\d{2,3}$)/);
 
 
         // Encontra se um problema no regex do valor, 
@@ -185,9 +217,10 @@ export function Formulario({dados}){
         // exemplo do valor acima ----> 19925
         
 
-        // if(x){
-            setValor(x);
-        // }
+        if(x && Number(x[2].replace(/^00+/, '0') + x[3].replace(",",".") + x[4][0] + x[4][1]) >= 1){
+            setValor(x[1] + x[2].replace(/^00+/, '0') + x[3] + x[4][0] + x[4][1]);
+        //    setValor(x);
+        }
         
     }
 
@@ -249,7 +282,7 @@ export function Formulario({dados}){
         setNome('');
         setCpf('');
         setTel('');
-        setValor('');
+        setValor('R$ 1,00');
         // @paulox
         // Comentei essa parte, pois ao fazer uma transacao pix,
         // esta limpando as opcoes, com isso o QrCode nao aparece na tela. 
@@ -289,9 +322,9 @@ export function Formulario({dados}){
         }
 
         var mes2 = ""
-        if (x[1] && x[0] == 0){
+        if (x[1] !== '0' && x[0] === '0'){
             mes2 = x[1]
-        } else if (x[0] == 1 && x[1] < 3){
+        } else if (x[0] === '1' && x[1] < 3){
             mes2 = x[1]
         }
         setExpirationMonth(x[0]+x[1])
@@ -305,8 +338,42 @@ export function Formulario({dados}){
         setCvc(x)
     }
 
-    async function handleSubmit(e){     
+    function TestaCPF(strCPF) {
+        var Soma;
+        var Resto;
+        Soma = 0;        
+        var i = 0;        
+        
+        strCPF = strCPF.replace(".","").replace(".","").replace("-","")
+
+        if (strCPF === "00000000000") return false;
+
+        for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+        Resto = (Soma * 10) % 11;
+
+        if ((Resto === 10) || (Resto === 11))  Resto = 0;
+        if (Resto !== parseInt(strCPF.substring(9, 10)) ) return false;
+
+        Soma = 0;
+        for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+        Resto = (Soma * 10) % 11;
+
+        if ((Resto === 10) || (Resto === 11))  Resto = 0;
+        if (Resto !== parseInt(strCPF.substring(10, 11) ) ) return false;
+        return true;
+    }
+
+    async function handleSubmit(e){     ////////////////////////////
         e.preventDefault();
+
+        if(TestaCPF(cpf) === false){
+            alert("CPF INVÁLIDO")
+            return;
+        }
+
+        setDoando(true)
+
+
         if (opcaoPagamento === "BOLETO") {
             callApiBoleto()
         } else if (opcaoPagamento === "CARNE") {
@@ -318,7 +385,7 @@ export function Formulario({dados}){
         }
         await doc.useServiceAccountAuth({
             client_email: process.env.REACT_APP_ID_CONTA,
-            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n') //credenciais.private_key
+            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n')  //credenciais.private_key
         })
 
         await doc.loadInfo(); 
@@ -341,15 +408,14 @@ export function Formulario({dados}){
             }
         ])
 
-
-        
-        setJaDoou(true)
+        setDoando(false)
+        !opcaoPix ? setJaDoou(true) : <></>
         limpaFormulario();
 
     }
 
     function retornaBandeira(number) {
-        var number = number.replace(/[^0-9]+/g, '');
+        number = number.replace(/[^0-9]+/g, '');
         var cards = {
             visa      : /^4[0-9]{12}(?:[0-9]{3})/,
             mastercard : /^5[1-5][0-9]{14}/,
@@ -378,6 +444,9 @@ export function Formulario({dados}){
         var valorAux = valor.replace("R$ ", "").replace(",", "")
         var cpfAux = cpf.replace(".", "").replace("-", "").replace(".", "")
         var telAux = tel.replace("(", "").replace(") ", "").replace("-", "")
+        var cepAux = cep.replace("-","");
+        var dataAux = dataNascimento.split("-");
+        dataAux = dataAux[2] + "-" + dataAux[1] + "-" + dataAux[0];
         // Criando o objeto contendo os dados do doador
         var obj = {
             nome: nome,
@@ -385,10 +454,10 @@ export function Formulario({dados}){
             telefone: telAux,
             rua: rua,
             numero: parseInt(numeroCasa,10),
-            cep: cep,
+            cep: cepAux,
             bairro: bairro,
             email: email,
-            dataNascimento: dataNascimento,
+            dataNascimento: dataAux,
             cidade: cidade,
             estado: estado,
             campanha: {
@@ -504,9 +573,12 @@ export function Formulario({dados}){
 
     },[]);  
 
+    
+
     return(
         <>
            {/* <section id="doacao" style={{background:`url(${fundo})`}}> */}
+            {doando ? <Loading/> : 
                 <div className="container">
                     <div className="row">
                         <div className="col-sm-8 col-md-12">
@@ -545,7 +617,7 @@ export function Formulario({dados}){
                                                     <input type="text" onChange={handleChangeDataNascimento} value={dataNascimento} className="form-control input-lg" placeholder="Qual é sua data de nascimento? *" required />
                                                 </div>
                                                 <div className="form-group">
-                                                    <input type="text" onChange={handleChangeEmail} value={email} className="form-control input-lg" placeholder="Qual é o seu E-mail? *" required />
+                                                    <input type="email" onChange={handleChangeEmail} value={email} className="form-control input-lg" placeholder="Qual é o seu E-mail? *" required />
                                                 </div>
                                                 <div className="form-group">
                                                     <input type="text" onChange={handleChangeRua} value={rua} className="form-control input-lg" placeholder="Qual o nome da sua rua? *" required />
@@ -708,13 +780,27 @@ export function Formulario({dados}){
                                             
                                             <div className="col-sm-8 col-md-12">
 
-                                                <div className="col-md-6">
+                                                <div className="col-md-6 QrCode">
                                                     <h1> Doe através da chave PIX </h1>
-                                                    <span> *********</span>
+                                                    <span> {docCampanha && docCampanha.data.chavepix[0].text !== '' ? docCampanha.data.chavepix[0].text : '********-****-****-****-************'}</span>
                                                 </div>
-                                                <div className="col-md-6">
+                                                <div className="col-md-6 QrCode">
                                                     <h1> Ou escaneie o código abaixo</h1>
-                                                    <img src={dataQrCode}></img>
+
+                                                    {dataQrCode !== '' 
+
+                                                    ?                                                         
+                                                        <img src={dataQrCode} alt="QrCode" /> 
+                                                    :
+
+                                                    <>
+                                                        <button type="submit" className={`btn btn-${dados.data.tipobotao[0].text} btn-lg`} onClick={()=>{}} >
+                                                            Gerar QrCode
+                                                        </button> 
+                                                    </>
+                                                    
+                                                    }
+                                                    
                                                 </div>
                                                 
                                             </div>  
@@ -727,14 +813,16 @@ export function Formulario({dados}){
                                 </div> 
                                 <div className="row">
 
+                                    {opcaoPix !== true ?
                                     <div className="form-group doacaoSalvarDados">
 
                                         <input type="checkbox" onChange={handleChangeSalvarDados} className="form-control-input" name="salvarDados" id="SALVAR" checked={salvarDados} value={salvarDados}/>
                                         <label htmlFor="SALVAR" className="form-check-label labelDoacao">Salvar meus dados</label>
 
                                     </div> 
-
-                                    {jaDoou===true
+                                    : <> </> }
+                                    
+                                    {jaDoou===true && opcaoPix === false
                                         ?
                                         <>
                                             <div className="col-sm-8">
@@ -745,11 +833,15 @@ export function Formulario({dados}){
                                             </div> 
                                         </>
                                         :
-                                        <>
-                                        <div className="col-sm-8">
-                                            <button type="submit" className={`btn btn-${dados.data.tipobotao[0].text} btn-lg`}>Realizar Doação</button>
-                                        </div>                                         
-                                        </>
+                                            <>
+                                            {opcaoPix === true ? 
+                                            <div/>
+                                            :
+                                            <div className="col-sm-8">
+                                                <button type="submit" className={`btn btn-${dados.data.tipobotao[0].text} btn-lg`}>Realizar Doação</button>
+                                            </div>  
+                                            }                                                                               
+                                            </>
                                     }
                                     
                                 </div>
@@ -757,7 +849,7 @@ export function Formulario({dados}){
                             
                         </div>
                     </div>
-                </div>
+                </div> }
             {/* </section>     */}
         </>
     );

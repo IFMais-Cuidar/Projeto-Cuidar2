@@ -11,6 +11,7 @@ import { Servicos } from "../../components/Servicos";
 //import { Contato } from "../../components/Contato";
 
 import { Footer } from "../../components/Footer";
+import { Loading } from "../../components/Loading";
 
 function ListaDeServicos() {
 
@@ -41,7 +42,7 @@ function ListaDeServicos() {
         <Servicos dados={doc} todas={true} showButton={false} />
         <Footer dados={doc} />
       </>
-      : <div>Carregando...</div>
+      : <Loading />
       }
       
     </>
