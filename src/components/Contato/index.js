@@ -19,7 +19,11 @@ export function Contato({dados}){
     const [enviado, setEnviado] = useState(false);
 
     function handleChangeName(event){
-        setNome(event.target.value);
+        const value = event.target.value;
+        const regMatch = /^[a-zA-Z ]*$/.test(value);    
+        if (regMatch) {
+            setNome(event.target.value)
+        }
     }    
 
     function handleChangeEmail(event){
@@ -27,7 +31,10 @@ export function Contato({dados}){
     } 
 
     function handleChangeTel(event){
-        setTel(event.target.value);
+        const x = event.target.value
+            .replace(/\D+/g, '')
+            .match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+        setTel(!x[2] ? x[1] : `(${x[1]}) ${x[2]}` + (x[3] ? `-${x[3]}` : ``))
     }   
 
     function handleChangeMsg(event){
@@ -43,11 +50,13 @@ export function Contato({dados}){
 
     async function handleSubmit(e){     
         e.preventDefault();        
-        
+        //console.log(credenciais.private_key);
+        //console.log('-------------------');
+        //console.log(`${process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n')}`);
         await doc.useServiceAccountAuth({
             client_email: process.env.REACT_APP_ID_CONTA,
             // client_email: 'testegooglesheets@carbon-ray-319517.iam.gserviceaccount.com',
-            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n')  //credenciais.private_key
+            private_key: process.env.REACT_APP_PRIVATE_KEY.replace(/\\n/g, '\n') //credenciais.private_key
         })
 
         await doc.loadInfo(); 

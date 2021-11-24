@@ -11,6 +11,7 @@ import { Campanhas } from "../../components/Campanhas";
 //import { Contato } from "../../components/Contato";
 
 import { Footer } from "../../components/Footer";
+import { Loading } from "../../components/Loading";
 
 function ListaDeCampanhas() {
 
@@ -42,7 +43,7 @@ function ListaDeCampanhas() {
         <Footer dados={dados} /> 
       </>  
       :
-      <div>Carregando...</div>
+      <Loading />
     }      
     </>
   );

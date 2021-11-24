@@ -11,6 +11,7 @@ import { QuemSomos } from "../../components/QuemSomos";
 //import { Contato } from "../../components/Contato";
 
 import { Footer } from "../../components/Footer";
+import { Loading } from "../../components/Loading";
 
 function ListaQuemSomos() {
 
@@ -41,7 +42,7 @@ function ListaQuemSomos() {
         <QuemSomos dados={doc} todas={true} showButton={false} />
         <Footer dados={doc} />
       </>      
-    : <div>Carregando...</div>}      
+    : <Loading />}      
     </>
   ); 
 }

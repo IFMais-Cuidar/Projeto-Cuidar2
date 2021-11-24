@@ -12,6 +12,7 @@ import { Contato } from "../../components/Contato";
 
 import { Footer } from "../../components/Footer";
 
+import { Loading } from "../../components/Loading";
 
 function Home() {
 
@@ -49,7 +50,7 @@ function Home() {
           <Footer dados={doc} />
         </>
           :
-        <div>Carregando...</div> // gif loading
+        <Loading />
     }
       
     </>

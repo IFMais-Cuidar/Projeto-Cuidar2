@@ -7,6 +7,7 @@ import { Galeria } from '../../components/Galeria';
 //import { QuemSomos } from '../../components/QuemSomos';
 import { Formulario } from '../../components/Formulario';
 import { Footer } from '../../components/Footer';
+import { Loading } from "../../components/Loading";
 
 function DetalheCampanha() {
 
@@ -41,7 +42,7 @@ function DetalheCampanha() {
         {/*<QuemSomos dados={doc} />*/}
         <Footer dados={doc}/>
       </>
-      : <div> Carregando... </div>}
+      : <Loading />}
         
       </>
   );
