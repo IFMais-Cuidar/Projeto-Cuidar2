@@ -1,6 +1,6 @@
 import React from 'react';
-
-import Carousel, { autoplayPlugin } from '@brainhubeu/react-carousel'; //npm install @brainhubeu/react-carousel
+                   //,slidesToShowPlugin 
+import Carousel, { autoplayPlugin} from '@brainhubeu/react-carousel'; //npm install @brainhubeu/react-carousel
 import '@brainhubeu/react-carousel/lib/style.css';
 
 import './header.css'
@@ -27,6 +27,29 @@ export function Header({dados}){
                             },                    
                         ]}
                         animationSpeed={1000}
+                        breakpoints={{
+                            640: {
+                                plugins: [
+                                 {
+                                   resolve: autoplayPlugin,//slidesToShowPlugin,
+                                   options: {
+                                    numberOfSlides: 1
+                                   }
+                                 },
+                               ]
+                              },
+                            900: {
+                              plugins: [
+                               {
+                                 resolve: autoplayPlugin,//slidesToShowPlugin,
+                                 options: {
+                                  numberOfSlides: 1
+                                 }
+                               },
+                             ]
+                            }
+                          }}
+
                     >
                         <img src={dados.data.imagemcapa1.url} alt={dados.data.imagemcapa1.alt}/>
                         <img src={dados.data.imagemcapa2.url} alt={dados.data.imagemcapa2.alt}/>
@@ -48,6 +71,29 @@ export function Header({dados}){
                             },                    
                         ]}
                         animationSpeed={1000}
+                        breakpoints={{
+                            640: {
+                                plugins: [
+                                 {
+                                   resolve: autoplayPlugin,//slidesToShowPlugin,
+                                   options: {
+                                    numberOfSlides: 1
+                                   }
+                                 },
+                               ]
+                              },
+                            900: {
+                              plugins: [
+                               {
+                                 resolve: autoplayPlugin,//slidesToShowPlugin,
+                                 options: {
+                                  numberOfSlides: 1
+                                 }
+                               },
+                             ]
+                            }
+                          }}
+
                     >
                         <img src={dados.data.imagemcapa1.url} alt={dados.data.imagemcapa1.alt}/>
                         <img src={dados.data.imagemcapa2.url} alt={dados.data.imagemcapa2.alt}/>
